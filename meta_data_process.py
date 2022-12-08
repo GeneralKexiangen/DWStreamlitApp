@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import traceback
 import re
-import os, pymysql
+import os
+import pymysql
 import pandas as pd
 import sys
 import meta_sql_config as sqlVar
