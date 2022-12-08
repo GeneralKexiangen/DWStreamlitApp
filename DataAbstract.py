@@ -40,7 +40,8 @@ def get_hive_ddl_sql(tdf, sysType):
 st.set_page_config(
     page_title="DATA.ER",
     page_icon="🐬",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state= 'collapsed'
 )
 hide_streamlit_style = """
 <style>

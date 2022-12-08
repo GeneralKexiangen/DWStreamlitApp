@@ -66,7 +66,8 @@ def get_hive_model_ddl_sql(modelDf, tableDf, tableName):
 st.set_page_config(
     page_title="DATA.ER",
     page_icon="🐬",
-    layout="wide"
+    layout="wide",
+    initial_sidebar_state= 'collapsed'
 )
 hide_streamlit_style = """
 <style>
@@ -107,5 +108,4 @@ if upFile:
             st.code(ddl)
         with c2:
             st.code(sql)
-    # embed streamlit docs in a streamlit app
-    # components.iframe("https://docs.streamlit.io/en/latest", width=1000, height=1000, scrolling=True)
+
