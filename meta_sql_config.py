@@ -1134,17 +1134,17 @@ STORED AS ORC;
 # ----------------------------------------------------通过excel 生成 job任务sql-----------------------------------------
 modelJobSql = """
 --********************************************************************--
---所属主题:{src_system_name} 
---功能描述: 
---创建者:
---创建日期:{current_date}
---修改日期  修改人  修改内容
+--BelongToTheme:{srcSystemName} 
+--TableDescription:{tableComment}
+--Creator:
+--CreateDate:{currentDate}
+--ModifyDate  Modifier  ModifyContent
 --yyyymmdd  name  comment
 --********************************************************************--
---DROP TABLE IF  EXISTS dwd_trd_ol_order_df;
-INSERT OVERWRITE TABLE {tableName} PARTITION ({partitionListStr})
+INSERT OVERWRITE TABLE {tableName} PARTITION ({partitionStr})
 SELECT {columnListStr} 
 FROM {tableJoinListStr}
+WHERE {whereSqlStr}
 """
 
 # ----------------------------------------------------增全量合并sql-----------------------------------------------------

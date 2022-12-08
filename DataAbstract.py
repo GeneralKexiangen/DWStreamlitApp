@@ -20,7 +20,9 @@ def get_hive_ddl_sql(tdf, sysType):
             return ' STRING COMMENT '
 
     tdf['hive_data_type'] = tdf['data_type'].apply(lambda x: trans_data_type(x))
-    tdf['sql_str'] = tdf['字段名'] + tdf['hive_data_type'] + "'" + tdf['字段描述'] + "'"
+    maxColLen = max(tdf['字段名'].str.len())
+    for index, row in tdf.iterrows():
+        tdf.loc[index, 'sql_str'] = row['字段名'] + ' '*(maxColLen+1-len(row['字段名'])) + row['hive_data_type'] + "'" + row['字段描述'] + "'"
     sqlStrList = list(tdf['sql_str'])
     sqlStr = """\n    , """.join(str(i) for i in sqlStrList)
     # 生成建表语句
@@ -64,11 +66,16 @@ sys_type = st.sidebar.text_input('Business System Type', 'local')
 db_connect_info_ = []
 conf = {}
 
-if len(db_connect_info) > 0 and len(sys_type) > 0:
+if (len(db_connect_info.split('/')) == 6 or len(db_connect_info.split('/')) == 8) and len(sys_type) > 0:
     db_connect_info_ = db_connect_info.split('/')
+    connect_type = ''
+    connect_name = ''
+    if len(db_connect_info_) == 6:
+        db_connect_info_.append(connect_type)
+        db_connect_info_.append(connect_name)
     conf = {'db_type': db_connect_info_[0], 'host': db_connect_info_[1], 'port': db_connect_info_[2],
             'user': db_connect_info_[3], 'pwd': db_connect_info_[4], 'charset': 'utf8',
-            'db_name': db_connect_info_[5]}
+            'db_name': db_connect_info_[5], 'connect_type': db_connect_info_[6], 'connect_name': db_connect_info_[7]}
     schemas_check = st.sidebar.button('Submit')
     if schemas_check:
         dbSchemasFun = dbMetaConfirm(srcDbInfo=conf)
@@ -119,8 +126,8 @@ if len(db_connect_info) > 0 and len(sys_type) > 0:
                 btn = st.download_button(
                     label="Download all data inventory as CSV",
                     data=file,
-                    file_name="{filename}.csv".format(filename=sys_type + 'DataInventory'),
-                    mime='text/csv'
+                    file_name="{filename}.xlsx".format(filename=sys_type + 'DataInventory'),
+                    mime='xlsx/csv'
                 )
     if table:
         td = st.session_state.table_df[table]
@@ -129,4 +136,4 @@ if len(db_connect_info) > 0 and len(sys_type) > 0:
         ddlSql = get_hive_ddl_sql(td, sys_type)
         st.code(ddlSql)
 else:
-    st.sidebar.warning('No Empty')
+    st.sidebar.warning('Wrong Information')
