@@ -5,7 +5,7 @@ st.set_page_config(
     page_title="DATA.ER",
     page_icon="🐬",
     layout="wide",
-    initial_sidebar_state= 'collapsed'
+    initial_sidebar_state='collapsed'
 )
 hide_streamlit_style = """
 <style>
@@ -15,8 +15,9 @@ footer {visibility: hidden;}
 """
 st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 
-st.markdown("# Page 3 🎉")
-st.sidebar.markdown("# Page 3 🎉")
+st.sidebar.markdown("# Data Warehouse Manage")
+st.title('Data Warehouse')
+st.write('Nothing')
 # embed streamlit docs in a streamlit app
 # components.iframe("https://docs.streamlit.io/en/latest", width=1000, height=1000, scrolling=True)
 
