@@ -58,6 +58,7 @@ class connDb(object):
         return self.__conn._closed
 
     def select(self, sql):
+        result = "-99999"
         try:
             if self.__dbType == 'mysql':
                 import pymysql
@@ -86,7 +87,7 @@ class connDb(object):
             print(sql)
             errors = traceback.format_exc()
             print(errors)
-            return "-99999"
+            return result
 
     def dml(self, sql):
         try:

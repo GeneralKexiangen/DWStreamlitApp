@@ -60,6 +60,7 @@ class dbMeta(object):
 
     def get_simple_data(self, tableInfo):
         '''获取数据样例'''
+        sql = """"""
         try:
             print('正在获取样例数据:' + tableInfo['table_schema'] + '.' + tableInfo['table_name'])
             if self.__metaType.lower() == 'mysql':
@@ -137,11 +138,10 @@ class dbMeta(object):
                        }
             tableInfoDf = pd.DataFrame(list(tableList))
             tableInfoDf.rename(columns=columns, inplace=True)
-            # tableInfoDf['表描述'] = tableInfoDf['表描述'].str.decode("utf-8")
-            # print('>>>>>>>>>tableInfoDf',tableInfoDf)
+            tableInfoDf = tableInfoDf.apply(pd.to_numeric, errors='ignore')
             self.__writerExcel.write_excel(tableInfoDf, sheet_name='数据目录', header_row_position=0)  ##表目录写入excel中
             tableColDfs = self.metadata_col_to_excel(tableList)  # 字段写入到excel
-            metaDfResult = {'tableInfoDf':tableInfoDf,'tableColDf':tableColDfs}
+            metaDfResult = {'tableInfoDf': tableInfoDf, 'tableColDf': tableColDfs}
             self.__writerExcel.save_excel()  # 保存zexcel文件
             return metaDfResult
         except Exception as e:
@@ -157,6 +157,7 @@ class dbMeta(object):
                 print(eval(x))
             self.__writerExcel.save_excel()  # 保存excel文件
             return {}
+
     def metadata_col_to_excel(self, tableList):
         '''
             功能描述: 获取源数据库的表目录及字段信息,写入excel中
@@ -436,5 +437,3 @@ if __name__ == '__main__':
     #     , colMetaTab='jdy___inv_meta_db_column'  # 字段元数据表
     #     , impType='2'  # 1:delete schema列表后重导    2:truncate 后重导  3:2:断点续传
     # )  # 盘点数据写入Mysql
-
-

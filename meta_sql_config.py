@@ -485,7 +485,7 @@ SELECT '{systemName}' system_name
     , g.name table_schema
     , a.NAME table_name
     , case when a.xtype ='U' then 'TABLE' else 'VIEW' END table_type
-    , cast(b.VALUE AS varchar(100) ) table_name_cn
+    , case when b.name not like '%Description%' then a.NAME else cast(b.VALUE AS varchar(100) ) end table_name_cn
     , null generate_type
     , null is_used 
     , null is_core_table
@@ -555,7 +555,7 @@ invSqlserverColList = """
 SELECT  '{systemName}' system_name
     , h.name table_schema
     , d.name table_name 
-    , CAST(e.VALUE AS varchar(200))  table_comment 
+    , case when e.name not like '%Description%' then d.name else CAST(e.VALUE AS varchar(200)) end table_comment 
     , A.NAME column_name 
     , CAST(g.VALUE AS varchar(200))  column_comment 
     , b.name column_type
