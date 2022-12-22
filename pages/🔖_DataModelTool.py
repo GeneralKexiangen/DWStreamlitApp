@@ -6,15 +6,14 @@ import streamlit.components.v1 as components
 
 
 def get_hive_model_ddl_sql(modelDf, tableDf, tableName):
-    tableComment = modelDf[modelDf['表名'] == tableName]['表描述'][0]
-    partitionStr = modelDf[modelDf['表名'] == tableName]['分区字段'][0]
-    sysType = modelDf[modelDf['表名'] == tableName]['数据域'][0]
+    tableComment = list(modelDf[modelDf['表名'] == tableName]['表描述'])[0]
+    partitionStr = list(modelDf[modelDf['表名'] == tableName]['分区字段'])[0]
+    sysType = list(modelDf[modelDf['表名'] == tableName]['数据域'])[0]
 
     maxColLen = max(tableDf['字段名'].str.len())
     for index, row in tableDf.iterrows():
         tableDf.loc[index, 'sql_str'] = row['字段名'] + ' '*(maxColLen+1-len(row['字段名'])) + row['字段数据类型'].upper() + " COMMENT '" + row['字段描述'] + "' "
 
-    # tableDf['sql_str'] = tableDf['字段名'] + ' ' + tableDf['字段数据类型'].str.upper() + " COMMENT '" + tableDf['字段描述'] + "'"
     sqlStrList = list(tableDf['sql_str'])
     sqlStr = """\n    , """.join(str(i) for i in sqlStrList)
     # 生成建表语句
@@ -79,6 +78,11 @@ st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 st.sidebar.markdown("# Data Model Tool️")
 st.title('Data Model')
 
+session_state_list = ['upFile', 'upFileDf', 'tables']
+for ss in session_state_list:
+    if ss not in st.session_state:
+        st.session_state[ss] = None
+
 with st.expander("See Data Model Template And Download"):
     st.write("""
             Design the data model with this template and according to the rule within,
@@ -97,12 +101,15 @@ if upFile:
     upFileDf = pd.read_excel(upFile)
     st.dataframe(upFileDf)
     tables = list(upFileDf['表名'])
-    table = st.selectbox('Select a Data Model', tables)
+    st.session_state.upFile = upFile
+    st.session_state.upFileDf = upFileDf
+    st.session_state.tables = tables
+    table = st.selectbox('Select a Data Model', st.session_state.tables)
     if table:
-        tdf = pd.read_excel(upFile, sheet_name=table, header=1)
+        tdf = pd.read_excel(st.session_state.upFile, sheet_name=table, header=1)
         tdf["字段描述"].fillna("", inplace=True)
         st.dataframe(tdf)
-        ddl, sql = get_hive_model_ddl_sql(upFileDf, tdf, table)
+        ddl, sql = get_hive_model_ddl_sql(st.session_state.upFileDf, tdf, table)
         c1, c2 = st.columns(2)
         with c1:
             st.code(ddl)
