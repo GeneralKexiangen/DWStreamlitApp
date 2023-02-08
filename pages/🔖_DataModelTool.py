@@ -31,10 +31,10 @@ def get_hive_model_ddl_sql(modelDf, tableDf, tableName):
     for index, row in tableDf.iterrows():
         tableDf.loc[index, 'col_str'] = str(row['加工逻辑']).format(str(row['来源表别名'] + '.' + row['来源字段'])) + ' AS ' + row[
             '字段名'] + ' '*(maxColLen+1-len(row['字段名']))+' --' + row['字段描述']
-    tableDf['col_code_str'] = tableDf['col_str'].apply(lambda x: str(x).split(' AS')[0])
+    tableDf['col_code_str'] = tableDf['col_str'].apply(lambda x: 'x'*30 if 'case' in str(x).lower() else str(x).split(' AS')[0])
     maxLen = max(tableDf['col_code_str'].str.len())
     tableDf['col_str'] = tableDf['col_str'].apply(
-        lambda x: str(x).replace(' AS', ' ' * (maxLen+1 - len(str(x).split(' AS')[0])) + 'AS'))
+        lambda x: str(x).replace(' AS', ' ' * (maxLen+1 - len(str(x).split(' AS')[0])) + ' AS'))
     colSqlStrList = list(tableDf['col_str'])
     colSqlStr = """\n    , """.join(str(i) for i in colSqlStrList)
     tableRelations = []
